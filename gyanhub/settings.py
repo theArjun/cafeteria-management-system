@@ -38,6 +38,11 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
+    # Third Party apps
+    'logentry_admin',
+    'import_export',
+    'django_extensions',
+
     # Local apps
     'cafeteria.apps.CafeteriaConfig',
 ]

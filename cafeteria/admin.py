@@ -3,6 +3,7 @@ from django.db.models import Sum
 from django.db.models.signals import post_delete
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from import_export.admin import ImportExportModelAdmin
 
 from .models import DailyBalance
 from .models import Expense
@@ -12,7 +13,7 @@ from .models import Transaction
 
 
 @admin.register(Particular)
-class ParticularAdmin(admin.ModelAdmin):
+class ParticularAdmin(ImportExportModelAdmin):
     list_display = [
         'particular',
         'cost_unit_price',
@@ -24,10 +25,11 @@ class ParticularAdmin(admin.ModelAdmin):
         'particular',
         'bought_for',
     ]
+    
 
 
 @admin.register(Income)
-class IncomeAdmin(admin.ModelAdmin):
+class IncomeAdmin(ImportExportModelAdmin):
 
     fields = [
         'date',
@@ -64,7 +66,7 @@ class IncomeAdmin(admin.ModelAdmin):
 
 
 @admin.register(Expense)
-class ExpenseAdmin(admin.ModelAdmin):
+class ExpenseAdmin(ImportExportModelAdmin):
 
     fields = [
         'date',
@@ -101,7 +103,7 @@ class ExpenseAdmin(admin.ModelAdmin):
 
 
 @admin.register(Transaction)
-class TransactionAdmin(admin.ModelAdmin):
+class TransactionAdmin(ImportExportModelAdmin):
     list_display = [
         'date',
         'party',
@@ -123,7 +125,7 @@ class TransactionAdmin(admin.ModelAdmin):
 
 
 @admin.register(DailyBalance)
-class DailyBalanceAdmin(admin.ModelAdmin):
+class DailyBalanceAdmin(ImportExportModelAdmin):
 
     list_display = [
         'date',

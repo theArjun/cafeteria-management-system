@@ -1,0 +1,1 @@
+rm db.sqlite3 && rm -rf cafeteria/migrations  && python manage.py makemigrations cafeteria && python manage.py migrate && ./scripts/create_superuser.sh && python manage.py runserver

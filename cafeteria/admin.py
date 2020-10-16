@@ -6,6 +6,7 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from import_export.admin import ImportExportModelAdmin
 
+from .forms import IncomeAdminForm
 from .models import CafeteriaManager
 from .models import Credit
 from .models import DailyBalance
@@ -86,16 +87,7 @@ class ParticularAdmin(ImportExportModelAdmin):
 @admin.register(Income)
 class IncomeAdmin(ImportExportModelAdmin):
 
-    fields = [
-        'date',
-        'customer',
-        'particular',
-        'quantity',
-        'discount_percent',
-        'is_sold_after_6_pm',
-        'status',
-        'remarks',
-    ]
+    form = IncomeAdminForm
 
     list_display = [
         'customer',

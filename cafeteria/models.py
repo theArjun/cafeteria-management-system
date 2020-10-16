@@ -22,6 +22,8 @@ class CafeteriaManager(TimeStampedModelMixin):
         try:
             if_anyone_is_active = CafeteriaManager.objects.get(is_active=True)
             if_anyone_is_active.is_active = False
+            super(CafeteriaManager, if_anyone_is_active).save(
+                *args, **kwargs)
         except CafeteriaManager.DoesNotExist:
             self.is_active = True
         super(CafeteriaManager, self).save(

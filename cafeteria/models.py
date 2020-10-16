@@ -3,10 +3,42 @@ from django.db.models import Sum
 from django.utils.translation import gettext_lazy as _
 from utils.fields import PercentField
 from utils.functions import calculate_percentage
+from utils.models import RemarksModelMixin
 from utils.models import TimeStampedModelMixin
 
 
-class Particular(TimeStampedModelMixin):
+class CafeteriaManager(TimeStampedModelMixin):
+
+    name = models.CharField(max_length=255)
+    address = models.CharField(max_length=255)
+    phone_number = models.CharField(max_length=255)
+    joined_date = models.DateField(max_length=255)
+    is_active = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f'{self.name}'
+
+    def save(self, *args, **kwargs):
+        try:
+            if_anyone_is_active = CafeteriaManager.objects.get(is_active=True)
+            if_anyone_is_active.is_active = False
+        except CafeteriaManager.DoesNotExist:
+            self.is_active = True
+        super(CafeteriaManager, self).save(
+            *args, **kwargs)  # Call the real save() method
+
+
+class Incentive(TimeStampedModelMixin):
+
+    date = models.DateField()
+    manager = models.ForeignKey(CafeteriaManager, on_delete=models.CASCADE)
+    amount = models.FloatField(default=0)
+
+    def __str__(self):
+        return f'{self.date} - {self.manager}'
+
+
+class Particular(TimeStampedModelMixin, RemarksModelMixin):
 
     class Purpose(models.TextChoices):
         INPUT = "INPUT", "Input"
@@ -27,7 +59,7 @@ class Particular(TimeStampedModelMixin):
         return f'{self.particular}'
 
 
-class Income(TimeStampedModelMixin):
+class Income(TimeStampedModelMixin, RemarksModelMixin):
 
     class Types(models.TextChoices):
         CASH = "CASH", "Cash"
@@ -39,7 +71,8 @@ class Income(TimeStampedModelMixin):
     sub_total = models.FloatField()
     discount_percent = PercentField(_('Discount Percent'))
     net_total = models.FloatField()
-    customer = models.CharField(max_length=255)
+    is_sold_after_6_pm = models.BooleanField(default=False)
+    customer = models.CharField(max_length=255, blank=True, null=True)
     status = models.CharField(
         _("Status"),
         max_length=50,
@@ -60,10 +93,30 @@ class Income(TimeStampedModelMixin):
             method='-'
         )
 
+        try:
+            stock_item = Stock.objects.get(particular=self.particular)
+            stock_item.item_remaining = stock_item.item_remaining - self.quantity
+            stock_item.save()
+        except Stock.DoesNotExist:
+            pass
+
+        try:
+            manager = CafeteriaManager.objects.get(is_active=True)
+            Incentive.objects.create(
+                date=self.date,
+                manager=manager,
+                amount=0.1 * self.net_total
+            )
+        except CafeteriaManager.DoesNotExist:
+            pass
+
         super(Income, self).save(*args, **kwargs)
 
+    class Meta:
+        verbose_name = 'Income / Sale'
 
-class Expense(TimeStampedModelMixin):
+
+class Expense(TimeStampedModelMixin, RemarksModelMixin):
 
     class Types(models.TextChoices):
         CASH = "CASH", "Cash"
@@ -90,14 +143,26 @@ class Expense(TimeStampedModelMixin):
         cost_unit_price = self.particular.cost_unit_price
         self.total_price = self.quantity * cost_unit_price
 
+        try:
+            stock_item = Stock.objects.get(particular=self.particular)
+            stock_item.item_remaining = stock_item.item_remaining + self.quantity
+            stock_item.save()
+        except Stock.DoesNotExist:
+            stock_item = Stock()
+            stock_item.particular = self.particular
+            stock_item.item_remaining = self.quantity
+            stock_item.save()
+
         super(Expense, self).save(*args, **kwargs)
 
+    class Meta:
+        verbose_name = 'Expense / Buying'
 
-class Transaction(TimeStampedModelMixin):
+
+class Transaction(TimeStampedModelMixin, RemarksModelMixin):
 
     date = models.DateField()
     party = models.CharField(max_length=255)
-    reason = models.CharField(max_length=255, null=True, blank=True)
     amount = models.FloatField()
     is_expenditure = models.BooleanField(
         _('Is Expenditure or not ?'),
@@ -110,7 +175,7 @@ class Transaction(TimeStampedModelMixin):
         return f'{self.date} - {self.party} - {self.amount}'
 
 
-class DailyBalance(TimeStampedModelMixin):
+class DailyBalance(TimeStampedModelMixin, RemarksModelMixin):
 
     date = models.DateField(unique=True)
     opening_balance = models.FloatField(_('Opening Balance'))
@@ -147,3 +212,47 @@ class DailyBalance(TimeStampedModelMixin):
         self.closing_balance = opening_balance + total_income + \
             investment - total_expense - expenditure
         super(DailyBalance, self).save(*args, **kwargs)
+
+
+class Stock(TimeStampedModelMixin):
+
+    particular = models.ForeignKey(Particular, on_delete=models.CASCADE)
+    item_remaining = models.PositiveIntegerField()
+
+    def __str__(self):
+        return f'{self.particular}'
+
+
+class Credit(TimeStampedModelMixin):
+
+    date = models.DateField()
+    transaction = models.OneToOneField(Income, on_delete=models.CASCADE)
+    mark_as_cleared = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f'{self.transaction}'
+
+    def save(self, *args, **kwargs):
+        if self.pk:
+            try:
+                to_mark_as_clear_sale = Income.objects.get(pk=self.pk)
+                to_mark_as_clear_sale.status = Income.Types.CASH
+                to_mark_as_clear_sale.save()
+            except Income.DoesNotExist:
+                pass
+        super(Credit, self).save(*args, **kwargs)
+
+
+class Penalty(TimeStampedModelMixin, RemarksModelMixin):
+
+    date = models.DateField()
+    party = models.CharField(max_length=255)
+    charge = models.FloatField()
+    is_fulfilled = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f'{self.party}'
+
+    class Meta:
+        verbose_name = 'Penalty'
+        verbose_name_plural = 'Penalties'

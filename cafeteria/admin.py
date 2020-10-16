@@ -20,7 +20,7 @@ from .models import Transaction
 
 
 @admin.register(CafeteriaManager)
-class CafeteriaManagerAdmin(admin.ModelAdmin):
+class CafeteriaManagerAdmin(ImportExportModelAdmin):
 
     list_display = [
         'name',
@@ -38,7 +38,7 @@ class CafeteriaManagerAdmin(admin.ModelAdmin):
 
 
 @admin.register(Incentive)
-class IncentiveAdmin(admin.ModelAdmin):
+class IncentiveAdmin(ImportExportModelAdmin):
 
     list_display = [
         'date',
@@ -226,7 +226,7 @@ class DailyBalanceAdmin(ImportExportModelAdmin):
 
 
 @admin.register(Stock)
-class StockAdmin(admin.ModelAdmin):
+class StockAdmin(ImportExportModelAdmin):
 
     fields = [
         'particular',
@@ -249,7 +249,7 @@ class StockAdmin(admin.ModelAdmin):
 
 
 @admin.register(Credit)
-class CreditAdmin(admin.ModelAdmin):
+class CreditAdmin(ImportExportModelAdmin):
 
     list_display = [
         'transaction',
@@ -277,7 +277,7 @@ class CreditAdmin(admin.ModelAdmin):
 
 
 @admin.register(Penalty)
-class PenaltyAdmin(admin.ModelAdmin):
+class PenaltyAdmin(ImportExportModelAdmin):
 
     fields = [
         'date',

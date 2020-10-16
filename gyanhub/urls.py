@@ -20,6 +20,12 @@ admin.site.site_header = "Gyan Hub"
 admin.site.site_title = "Gyan Hub Admin Portal"
 admin.site.index_title = "Welcome to Gyan Hub Management System"
 
+
+def trigger_error(request):
+    division_by_zero = 1 / 0
+
+
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    path('', admin.site.urls),
+    path('sentry-debug/', trigger_error),
 ]

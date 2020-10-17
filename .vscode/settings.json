@@ -1,5 +1,5 @@
 {
-  "python.pythonPath": "/mnt/c/Users/arjun/Desktop/workspace/gyanhub-management-system/.env/bin/python3.8",
+  "python.pythonPath": ".env/bin/python",
   "python.formatting.provider": "autopep8",
   "python.formatting.autopep8Args": ["--max-line-length=79"],
   "python.sortImports.args": ["-sl"],

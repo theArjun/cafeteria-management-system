@@ -46,7 +46,7 @@ INSTALLED_APPS = [
 
     # Third Party apps
     'logentry_admin',
-    'import_export',
+    # 'import_export',
     'django_extensions',
 
     # Local apps

@@ -22,8 +22,11 @@ distlib==0.3.0
 distro==1.4.0
 distro-info===0.23ubuntu1
 Django==3.1.2
+django-crispy-admin==0.0.6
+django-crispy-forms==1.9.2
 django-extensions==3.0.9
 django-import-export==2.4.0
+django-jazzmin==2.2.11
 django-logentry-admin==1.0.6
 entrypoints==0.3
 et-xmlfile==1.0.1

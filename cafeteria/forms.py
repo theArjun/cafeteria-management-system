@@ -10,6 +10,9 @@ from .models import Stock
 
 class IncomeAdminForm(forms.ModelForm):
 
+    class Media:
+        js = ('cafeteria/income/form_script.js',)
+
     class Meta:
         model = Income
 
@@ -30,6 +33,7 @@ class IncomeAdminForm(forms.ModelForm):
         cleaned_data = self.cleaned_data
         particular = cleaned_data.get('particular')
         quantity = cleaned_data.get('quantity')
+        
         try:
             particular_stock = Stock.objects.get(particular=particular)
             if particular_stock.item_remaining < quantity:

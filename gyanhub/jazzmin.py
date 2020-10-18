@@ -52,6 +52,7 @@ JAZZMIN_SETTINGS = {
         "cafeteria.stock": "fas fa-layer-group",
         "cafeteria.transaction": "fas fa-hand-holding-usd",
         "cafeteria.cafeteriamanager": "fas fa-user-circle",
+        "cafeteria.customer":"fas fa-users"
     },
 
     ###############

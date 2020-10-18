@@ -40,18 +40,41 @@ class Incentive(TimeStampedModelMixin):
         return f'{self.date} - {self.manager}'
 
 
+class Customer(TimeStampedModelMixin, RemarksModelMixin):
+    name = models.CharField(_('Customer Name'), max_length=255)
+    reserve_balance = models.FloatField(_('Reserve Balance'),default=0)
+    phone_number = models.CharField(_('Phone Number'), max_length=15, null=True, blank=True)
+    credit_balance = models.FloatField(_('Credit Balance'), default=0.0)
+
+    def save(self, *args, **kwargs):
+        if self.credit_balance >= self.reserve_balance:
+            difference = self.credit_balance - self.reserve_balance
+            self.reserve_balance = 0
+            self.credit_balance  = self.credit_balance - difference
+        else:
+            difference = self.reserve_balance - self.credit_balance
+            self.credit_balance = 0
+            self.reserve_balance  =  difference
+        super(Customer, self).save(*args, **kwargs)
+
+    def __str__(self):
+        return f'{self.name}'
+
+
+
+
 class Particular(TimeStampedModelMixin, RemarksModelMixin):
 
     class Purpose(models.TextChoices):
-        INPUT = "INPUT", "Input"
-        OUTPUT = "OUTPUT", "Output"
-        BOTH = "BOTH", "Both"
+        INPUT = 'INPUT', 'Input'
+        OUTPUT = 'OUTPUT', 'Output'
+        BOTH = 'BOTH', 'Both'
 
     particular = models.CharField(max_length=255)
     cost_unit_price = models.FloatField()
     selling_unit_price = models.FloatField()
     bought_for = models.CharField(
-        _("Purpose"),
+        _('Purpose'),
         max_length=50,
         choices=Purpose.choices,
         default=Purpose.OUTPUT
@@ -66,8 +89,9 @@ class Particular(TimeStampedModelMixin, RemarksModelMixin):
 class Income(TimeStampedModelMixin, RemarksModelMixin):
 
     class Types(models.TextChoices):
-        CASH = "CASH", "Cash"
-        CREDIT = "CREDIT", "Credit"
+        CASH = 'CASH', 'Cash'
+        CREDIT = 'CREDIT', 'Credit'
+        RESERVE = 'RESERVE', 'Reserve'
 
     date = models.DateField()
     particular = models.ForeignKey(Particular, on_delete=models.CASCADE)
@@ -84,9 +108,9 @@ class Income(TimeStampedModelMixin, RemarksModelMixin):
     )
     net_total = models.FloatField()
     is_sold_after_6_pm = models.BooleanField(default=False)
-    customer = models.CharField(max_length=255, blank=True, null=True)
+    customer = models.ForeignKey(Customer, on_delete=models.DO_NOTHING, blank=True, null=True)
     status = models.CharField(
-        _("Status"),
+        _('Status'),
         max_length=50,
         choices=Types.choices,
         default=Types.CASH
@@ -127,6 +151,28 @@ class Income(TimeStampedModelMixin, RemarksModelMixin):
         except CafeteriaManager.DoesNotExist:
             pass
 
+        if self.status == self.Types.RESERVE:
+            try:
+                customer = Customer.objects.get(id=self.customer.id)
+                net_total = self.net_total
+                balance = customer.reserve_balance
+                if balance >= net_total:
+                    customer.reserve_balance = balance - net_total
+                    customer.save()
+                else:
+                    pass
+            except Customer.DoesNotExist:
+                pass
+        elif self.status ==  self.Types.CREDIT:
+            try:
+                customer = Customer.objects.get(id=self.customer.id)
+                net_total = self.net_total
+                customer.credit_balance = customer.credit_balance + net_total
+                customer.save()
+            except Customer.DoesNotExist:
+                pass
+
+
         super(Income, self).save(*args, **kwargs)
 
     class Meta:
@@ -136,8 +182,8 @@ class Income(TimeStampedModelMixin, RemarksModelMixin):
 class Expense(TimeStampedModelMixin, RemarksModelMixin):
 
     class Types(models.TextChoices):
-        CASH = "CASH", "Cash"
-        CREDIT = "CREDIT", "Credit"
+        CASH = 'CASH', 'Cash'
+        CREDIT = 'CREDIT', 'Credit'
 
     date = models.DateField()
     particular = models.ForeignKey(Particular, on_delete=models.CASCADE)
@@ -146,7 +192,7 @@ class Expense(TimeStampedModelMixin, RemarksModelMixin):
     bought_by = models.CharField(max_length=255)
     bought_from = models.CharField(max_length=255)
     status = models.CharField(
-        _("Status"),
+        _('Status'),
         max_length=50,
         choices=Types.choices,
         default=Types.CASH

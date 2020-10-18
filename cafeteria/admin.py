@@ -8,6 +8,7 @@ from django.dispatch import receiver
 from .forms import IncomeAdminForm
 from .models import CafeteriaManager
 from .models import Credit
+from .models import Customer
 from .models import DailyBalance
 from .models import Expense
 from .models import Incentive
@@ -16,6 +17,28 @@ from .models import Particular
 from .models import Penalty
 from .models import Stock
 from .models import Transaction
+
+
+@admin.register(Customer)
+class CustomerAdmin(admin.ModelAdmin):
+    '''Admin View for Customer'''
+
+    fields = [
+        'name',
+        'phone_number',
+        'reserve_balance',
+        'credit_balance',
+        'remarks',
+    ]
+
+
+    list_display = [
+        'name',
+        'phone_number',
+        'reserve_balance',
+        'credit_balance',
+        'remarks'
+    ]
 
 
 @admin.register(CafeteriaManager)

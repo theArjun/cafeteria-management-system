@@ -51,6 +51,7 @@ INSTALLED_APPS = [
 
     # Local apps
     'cafeteria.apps.CafeteriaConfig',
+    'api.apps.ApiConfig',
 ]
 
 MIDDLEWARE = [

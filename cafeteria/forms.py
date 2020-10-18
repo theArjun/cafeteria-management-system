@@ -1,3 +1,5 @@
+from crispy_forms.helper import FormHelper
+from crispy_forms.layout import Submit
 from django import forms
 from django.utils.translation import ugettext_lazy as _
 
@@ -7,6 +9,7 @@ from .models import Stock
 
 
 class IncomeAdminForm(forms.ModelForm):
+
     class Meta:
         model = Income
 
@@ -16,6 +19,7 @@ class IncomeAdminForm(forms.ModelForm):
             'particular',
             'quantity',
             'discount_percent',
+            'service_tax',
             'is_sold_after_6_pm',
             'status',
             'remarks',

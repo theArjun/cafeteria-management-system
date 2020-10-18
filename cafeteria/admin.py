@@ -89,6 +89,20 @@ class IncomeAdmin(ImportExportModelAdmin):
 
     form = IncomeAdminForm
 
+    fieldsets = (
+        (None, {
+            'fields': ('date', 'customer', 'particular', 'quantity', 'is_sold_after_6_pm', 'status')
+        }),
+        ('Remarks', {
+            'classes': ('collapse',),
+            'fields': ('remarks',),
+        }),
+        ('Extra', {
+            'classes': ('collapse',),
+            'fields': ('discount_percent','service_tax'),
+        }),
+    )
+
     list_display = [
         'customer',
         'date',

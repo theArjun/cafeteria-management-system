@@ -71,7 +71,14 @@ class Income(TimeStampedModelMixin, RemarksModelMixin):
     particular = models.ForeignKey(Particular, on_delete=models.CASCADE)
     quantity = models.PositiveSmallIntegerField()
     sub_total = models.FloatField()
-    discount_percent = PercentField(_('Discount Percent'))
+    discount_percent = PercentField(
+        _('Discount Percent'),
+        default=0.0
+    )
+    service_tax = PercentField(
+        _('Service Tax Percent'),
+        default=0.0
+    )
     net_total = models.FloatField()
     is_sold_after_6_pm = models.BooleanField(default=False)
     customer = models.CharField(max_length=255, blank=True, null=True)

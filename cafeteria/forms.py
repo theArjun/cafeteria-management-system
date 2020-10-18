@@ -19,6 +19,7 @@ class IncomeAdminForm(forms.ModelForm):
             'particular',
             'quantity',
             'discount_percent',
+            'discount_amount',
             'service_tax',
             'is_sold_after_6_pm',
             'status',

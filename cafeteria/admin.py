@@ -4,7 +4,6 @@ from django.db.models import Sum
 from django.db.models.signals import post_delete
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-from import_export.admin import ImportExportModelAdmin
 
 from .forms import IncomeAdminForm
 from .models import CafeteriaManager
@@ -20,7 +19,7 @@ from .models import Transaction
 
 
 @admin.register(CafeteriaManager)
-class CafeteriaManagerAdmin(ImportExportModelAdmin):
+class CafeteriaManagerAdmin(admin.ModelAdmin):
 
     list_display = [
         'name',
@@ -38,7 +37,7 @@ class CafeteriaManagerAdmin(ImportExportModelAdmin):
 
 
 @admin.register(Incentive)
-class IncentiveAdmin(ImportExportModelAdmin):
+class IncentiveAdmin(admin.ModelAdmin):
 
     list_display = [
         'date',
@@ -59,7 +58,7 @@ class ExpenseInline(admin.TabularInline):
 
 
 @admin.register(Particular)
-class ParticularAdmin(ImportExportModelAdmin):
+class ParticularAdmin(admin.ModelAdmin):
 
     fields = [
         'particular',
@@ -83,15 +82,27 @@ class ParticularAdmin(ImportExportModelAdmin):
 
     inlines = [ExpenseInline, ]
 
+# class OrderAdminInline(admin.TabularInline):
+#     model = Order
+#     exclude = []
+#     after_field = 'status'
 
 @admin.register(Income)
-class IncomeAdmin(ImportExportModelAdmin):
+class IncomeAdmin(admin.ModelAdmin):
 
     form = IncomeAdminForm
+    # inlines = [OrderAdminInline]
 
     fieldsets = (
         (None, {
-            'fields': ('date', 'customer', 'particular', 'quantity', 'is_sold_after_6_pm', 'status')
+            'fields': (
+                'date', 
+                'customer', 
+                'particular', 
+                'quantity', 
+                'is_sold_after_6_pm', 
+                'status'
+            )
         }),
         ('Remarks', {
             'classes': ('collapse',),
@@ -99,7 +110,11 @@ class IncomeAdmin(ImportExportModelAdmin):
         }),
         ('Extra', {
             'classes': ('collapse',),
-            'fields': ('discount_percent','service_tax'),
+            'fields': (
+                'discount_percent', 
+                'discount_amount', 
+                'service_tax'
+                ),
         }),
     )
 
@@ -111,6 +126,7 @@ class IncomeAdmin(ImportExportModelAdmin):
         'quantity',
         'sub_total',
         'discount_percent',
+        'discount_amount',
         'net_total',
         'status',
     ]
@@ -118,7 +134,7 @@ class IncomeAdmin(ImportExportModelAdmin):
     list_filter = [
         'customer',
         'date',
-        'particular__particular',
+        # 'particular__particular',
         'status',
     ]
 
@@ -131,7 +147,7 @@ class IncomeAdmin(ImportExportModelAdmin):
 
 
 @admin.register(Expense)
-class ExpenseAdmin(ImportExportModelAdmin):
+class ExpenseAdmin(admin.ModelAdmin):
 
     fields = [
         'date',
@@ -171,7 +187,7 @@ class ExpenseAdmin(ImportExportModelAdmin):
 
 
 @admin.register(Transaction)
-class TransactionAdmin(ImportExportModelAdmin):
+class TransactionAdmin(admin.ModelAdmin):
 
     fields = [
         'date',
@@ -198,7 +214,7 @@ class TransactionAdmin(ImportExportModelAdmin):
 
 
 @admin.register(DailyBalance)
-class DailyBalanceAdmin(ImportExportModelAdmin):
+class DailyBalanceAdmin(admin.ModelAdmin):
 
     fields = [
         'date',
@@ -240,7 +256,7 @@ class DailyBalanceAdmin(ImportExportModelAdmin):
 
 
 @admin.register(Stock)
-class StockAdmin(ImportExportModelAdmin):
+class StockAdmin(admin.ModelAdmin):
 
     fields = [
         'particular',
@@ -263,7 +279,7 @@ class StockAdmin(ImportExportModelAdmin):
 
 
 @admin.register(Credit)
-class CreditAdmin(ImportExportModelAdmin):
+class CreditAdmin(admin.ModelAdmin):
 
     list_display = [
         'transaction',
@@ -291,7 +307,7 @@ class CreditAdmin(ImportExportModelAdmin):
 
 
 @admin.register(Penalty)
-class PenaltyAdmin(ImportExportModelAdmin):
+class PenaltyAdmin(admin.ModelAdmin):
 
     fields = [
         'date',

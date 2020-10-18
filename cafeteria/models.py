@@ -61,6 +61,8 @@ class Particular(TimeStampedModelMixin, RemarksModelMixin):
         return f'{self.particular}'
 
 
+
+
 class Income(TimeStampedModelMixin, RemarksModelMixin):
 
     class Types(models.TextChoices):
@@ -71,6 +73,7 @@ class Income(TimeStampedModelMixin, RemarksModelMixin):
     particular = models.ForeignKey(Particular, on_delete=models.CASCADE)
     quantity = models.PositiveSmallIntegerField()
     sub_total = models.FloatField()
+    discount_amount = models.FloatField(default=0.0)
     discount_percent = PercentField(
         _('Discount Percent'),
         default=0.0
@@ -101,6 +104,7 @@ class Income(TimeStampedModelMixin, RemarksModelMixin):
             percent=self.discount_percent,
             method='-'
         )
+        self.net_total = self.net_total - self.discount_amount
 
         try:
             stock_item = Stock.objects.get(particular=self.particular)
@@ -111,11 +115,15 @@ class Income(TimeStampedModelMixin, RemarksModelMixin):
 
         try:
             manager = CafeteriaManager.objects.get(is_active=True)
-            Incentive.objects.create(
-                date=self.date,
-                manager=manager,
-                amount=0.1 * self.net_total
-            )
+            if self.is_sold_after_6_pm is True:
+                Incentive.objects.create(
+                    date=self.date,
+                    manager=manager,
+                    amount=0.1 * self.net_total
+                )
+            else:
+                pass
+
         except CafeteriaManager.DoesNotExist:
             pass
 

@@ -30,14 +30,14 @@ class CafeteriaManager(TimeStampedModelMixin):
             *args, **kwargs)  # Call the real save() method
 
 
-class Incentive(TimeStampedModelMixin):
+# class Incentive(TimeStampedModelMixin):
 
-    date = models.DateField()
-    manager = models.ForeignKey(CafeteriaManager, on_delete=models.CASCADE)
-    amount = models.FloatField(default=0)
+#     date = models.DateField()
+#     manager = models.ForeignKey(CafeteriaManager, on_delete=models.CASCADE)
+#     amount = models.FloatField(default=0)
 
-    def __str__(self):
-        return f'{self.date} - {self.manager}'
+#     def __str__(self):
+#         return f'{self.date} - {self.manager}'
 
 
 class Customer(TimeStampedModelMixin, RemarksModelMixin):
@@ -107,7 +107,7 @@ class Income(TimeStampedModelMixin, RemarksModelMixin):
         default=0.0
     )
     net_total = models.FloatField()
-    is_sold_after_6_pm = models.BooleanField(default=False)
+    # is_sold_after_6_pm = models.BooleanField(default=False)
     customer = models.ForeignKey(Customer, on_delete=models.DO_NOTHING, blank=True, null=True)
     status = models.CharField(
         _('Status'),
@@ -137,19 +137,19 @@ class Income(TimeStampedModelMixin, RemarksModelMixin):
         except Stock.DoesNotExist:
             pass
 
-        try:
-            manager = CafeteriaManager.objects.get(is_active=True)
-            if self.is_sold_after_6_pm is True:
-                Incentive.objects.create(
-                    date=self.date,
-                    manager=manager,
-                    amount=0.1 * self.net_total
-                )
-            else:
-                pass
+        # try:
+        #     manager = CafeteriaManager.objects.get(is_active=True)
+        #     if self.is_sold_after_6_pm is True:
+        #         Incentive.objects.create(
+        #             date=self.date,
+        #             manager=manager,
+        #             amount=0.1 * self.net_total
+        #         )
+        #     else:
+        #         pass
 
-        except CafeteriaManager.DoesNotExist:
-            pass
+        # except CafeteriaManager.DoesNotExist:
+        #     pass
 
         if self.status == self.Types.RESERVE:
             try:

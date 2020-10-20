@@ -6,12 +6,12 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 
 from .forms import IncomeAdminForm
+# from .models import Incentive
 from .models import CafeteriaManager
 from .models import Credit
 from .models import Customer
 from .models import DailyBalance
 from .models import Expense
-from .models import Incentive
 from .models import Income
 from .models import Particular
 from .models import Penalty
@@ -59,21 +59,21 @@ class CafeteriaManagerAdmin(admin.ModelAdmin):
     ]
 
 
-@admin.register(Incentive)
-class IncentiveAdmin(admin.ModelAdmin):
+# @admin.register(Incentive)
+# class IncentiveAdmin(admin.ModelAdmin):
 
-    list_display = [
-        'date',
-        'manager',
-        'amount',
-    ]
+#     list_display = [
+#         'date',
+#         'manager',
+#         'amount',
+#     ]
 
-    list_filter = [
-        'date',
-        'manager__name',
-    ]
+#     list_filter = [
+#         'date',
+#         'manager__name',
+#     ]
 
-    date_hierarchy = 'date'
+#     date_hierarchy = 'date'
 
 class ExpenseInline(admin.TabularInline):
     model = Expense
@@ -123,7 +123,7 @@ class IncomeAdmin(admin.ModelAdmin):
                 'customer', 
                 'particular', 
                 'quantity', 
-                'is_sold_after_6_pm', 
+                # 'is_sold_after_6_pm', 
                 'status'
             )
         }),

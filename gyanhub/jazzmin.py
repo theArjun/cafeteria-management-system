@@ -46,7 +46,7 @@ JAZZMIN_SETTINGS = {
         "cafeteria.dailybalance": "fas fa-file-invoice-dollar",
         "cafeteria.expense": "fas fa-coins",
         "cafeteria.income": "fas fa-dollar-sign",
-        "cafeteria.incentive": "fas fa-funnel-dollar",
+        # "cafeteria.incentive": "fas fa-funnel-dollar",
         "cafeteria.particular": "fas fa-pizza-slice",
         "cafeteria.penalty": "fas fa-user-minus",
         "cafeteria.stock": "fas fa-layer-group",
@@ -67,7 +67,7 @@ JAZZMIN_SETTINGS = {
     "changeform_format": "horizontal_tabs",
 
     # Show UI Builder
-    # "show_ui_builder": True,
+    "show_ui_builder": True,
 
     "navbar_small_text": False,
     "footer_small_text": True,

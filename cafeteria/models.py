@@ -84,8 +84,6 @@ class Particular(TimeStampedModelMixin, RemarksModelMixin):
         return f'{self.particular}'
 
 
-
-
 class Income(TimeStampedModelMixin, RemarksModelMixin):
 
     class Types(models.TextChoices):
@@ -94,8 +92,6 @@ class Income(TimeStampedModelMixin, RemarksModelMixin):
         RESERVE = 'RESERVE', 'Reserve'
 
     date = models.DateField()
-    particular = models.ForeignKey(Particular, on_delete=models.CASCADE)
-    quantity = models.PositiveSmallIntegerField()
     sub_total = models.FloatField()
     discount_amount = models.FloatField(default=0.0)
     discount_percent = PercentField(
@@ -121,21 +117,22 @@ class Income(TimeStampedModelMixin, RemarksModelMixin):
 
     def save(self, *args, **kwargs):
 
-        selling_unit_price = self.particular.selling_unit_price
-        self.sub_total = self.quantity * selling_unit_price
-        self.net_total = calculate_percentage(
-            amount=self.sub_total,
-            percent=self.discount_percent,
-            method='-'
-        )
-        self.net_total = self.net_total - self.discount_amount
+        selling_unit_price = self.sales.all()
+        print(selling_unit_price)
+        # self.sub_total = self.quantity * selling_unit_price
+        # self.net_total = calculate_percentage(
+        #     amount=self.sub_total,
+        #     percent=self.discount_percent,
+        #     method='-'
+        # )
+        # self.net_total = self.net_total - self.discount_amount
 
-        try:
-            stock_item = Stock.objects.get(particular=self.particular)
-            stock_item.item_remaining = stock_item.item_remaining - self.quantity
-            stock_item.save()
-        except Stock.DoesNotExist:
-            pass
+        # try:
+        #     stock_item = Stock.objects.get(particular=self.particular)
+        #     stock_item.item_remaining = stock_item.item_remaining - self.quantity
+        #     stock_item.save()
+        # except Stock.DoesNotExist:
+        #     pass
 
         # try:
         #     manager = CafeteriaManager.objects.get(is_active=True)
@@ -177,6 +174,36 @@ class Income(TimeStampedModelMixin, RemarksModelMixin):
 
     class Meta:
         verbose_name = 'Income / Sale'
+
+
+class SaleItem(models.Model):
+    '''Model definition for SaleItem.'''
+
+    sale = models.ForeignKey(
+        Income, 
+        verbose_name=_('Sale Item'), 
+        on_delete=models.CASCADE,
+        related_name='sales',
+        related_query_name='sales',
+        )
+    particular = models.ForeignKey(Particular, on_delete=models.CASCADE)
+    quantity = models.PositiveSmallIntegerField()
+    total = models.FloatField(_('Total for Sale Item'))
+
+    class Meta:
+        '''Meta definition for SaleItem.'''
+
+        verbose_name = 'Sale Item'
+        verbose_name_plural = 'Sale Items'
+
+    def __str__(self):
+        '''Unicode representation of SaleItem.'''
+        return f'{self.particular} ({self.quantity})'
+
+    def save(self, *args, **kwargs):
+
+        self.total = self.particular.selling_unit_price * self.quantity
+        super(SaleItem, self).save(*args, **kwargs)
 
 
 class Expense(TimeStampedModelMixin, RemarksModelMixin):

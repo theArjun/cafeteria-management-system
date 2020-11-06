@@ -15,6 +15,7 @@ from .models import Expense
 from .models import Income
 from .models import Particular
 from .models import Penalty
+from .models import SaleItem
 from .models import Stock
 from .models import Transaction
 
@@ -105,24 +106,35 @@ class ParticularAdmin(admin.ModelAdmin):
 
     inlines = [ExpenseInline, ]
 
-# class OrderAdminInline(admin.TabularInline):
-#     model = Order
-#     exclude = []
-#     after_field = 'status'
+@admin.register(SaleItem)
+class SaleItemAdmin(admin.ModelAdmin):
+    '''Admin View for SaleItem'''
+
+    list_display = (
+        'particular',
+        'quantity'
+    )
+
+
+class SaleItemInline(admin.TabularInline):
+    '''Tabular Inline View for SaleItem'''
+
+    model = SaleItem
+    exclude = ['total',]
 
 @admin.register(Income)
 class IncomeAdmin(admin.ModelAdmin):
 
     form = IncomeAdminForm
-    # inlines = [OrderAdminInline]
+    inlines = [SaleItemInline]
 
     fieldsets = (
         (None, {
             'fields': (
                 'date', 
                 'customer', 
-                'particular', 
-                'quantity', 
+                #'particular', 
+                #'quantity', 
                 # 'is_sold_after_6_pm', 
                 'status'
             )
@@ -144,9 +156,8 @@ class IncomeAdmin(admin.ModelAdmin):
     list_display = [
         'customer',
         'date',
-        'particular',
-        'selling_unit_price',
-        'quantity',
+        #'particular',
+        #'quantity',
         'sub_total',
         'discount_percent',
         'discount_amount',
@@ -157,16 +168,12 @@ class IncomeAdmin(admin.ModelAdmin):
     list_filter = [
         'customer',
         'date',
-        # 'particular__particular',
         'status',
     ]
 
     date_hierarchy = 'date'
 
-    def selling_unit_price(self, obj):
-        return obj.particular.selling_unit_price
 
-    date_hierarchy = 'date'
 
 
 @admin.register(Expense)

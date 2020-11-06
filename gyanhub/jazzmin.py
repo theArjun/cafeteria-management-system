@@ -64,7 +64,7 @@ JAZZMIN_SETTINGS = {
     # - vertical_tabs
     # - collapsible
     # - carousel
-    "changeform_format": "horizontal_tabs",
+    "changeform_format": "collapsible",
 
     # Show UI Builder
     "show_ui_builder": True,

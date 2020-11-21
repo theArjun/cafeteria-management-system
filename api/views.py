@@ -1,5 +1,6 @@
-from cafeteria.models import Stock
 from django.http import JsonResponse
+
+from cafeteria.models import Stock
 
 
 def get_stock(request, id):

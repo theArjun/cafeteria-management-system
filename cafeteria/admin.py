@@ -1,23 +1,26 @@
 from django.contrib import admin
-from django.contrib.contenttypes.models import ContentType
 from django.db.models import Sum
-from django.db.models.signals import post_delete
-from django.db.models.signals import post_save
+from django.db.models.signals import (
+    post_delete,
+    post_save,
+)
 from django.dispatch import receiver
+from django.utils.html import mark_safe
 
 from .forms import IncomeAdminForm
 # from .models import Incentive
-from .models import CafeteriaManager
-from .models import Credit
-from .models import Customer
-from .models import DailyBalance
-from .models import Expense
-from .models import Income
-from .models import Particular
-from .models import Penalty
-from .models import SaleItem
-from .models import Stock
-from .models import Transaction
+from .models import (
+    CafeteriaManager,
+    Customer,
+    DailyBalance,
+    Expense,
+    Income,
+    Particular,
+    Penalty,
+    SaleItem,
+    Stock,
+    Transaction,
+)
 
 
 @admin.register(Customer)
@@ -31,7 +34,6 @@ class CustomerAdmin(admin.ModelAdmin):
         'credit_balance',
         'remarks',
     ]
-
 
     list_display = [
         'name',
@@ -58,23 +60,6 @@ class CafeteriaManagerAdmin(admin.ModelAdmin):
         'address',
         'is_active',
     ]
-
-
-# @admin.register(Incentive)
-# class IncentiveAdmin(admin.ModelAdmin):
-
-#     list_display = [
-#         'date',
-#         'manager',
-#         'amount',
-#     ]
-
-#     list_filter = [
-#         'date',
-#         'manager__name',
-#     ]
-
-#     date_hierarchy = 'date'
 
 class ExpenseInline(admin.TabularInline):
     model = Expense
@@ -106,6 +91,7 @@ class ParticularAdmin(admin.ModelAdmin):
 
     inlines = [ExpenseInline, ]
 
+
 @admin.register(SaleItem)
 class SaleItemAdmin(admin.ModelAdmin):
     '''Admin View for SaleItem'''
@@ -116,11 +102,14 @@ class SaleItemAdmin(admin.ModelAdmin):
     )
 
 
+
 class SaleItemInline(admin.TabularInline):
     '''Tabular Inline View for SaleItem'''
 
     model = SaleItem
-    exclude = ['total',]
+    exclude = ['total', ]
+
+
 
 @admin.register(Income)
 class IncomeAdmin(admin.ModelAdmin):
@@ -131,11 +120,9 @@ class IncomeAdmin(admin.ModelAdmin):
     fieldsets = (
         (None, {
             'fields': (
-                'date', 
-                'customer', 
-                #'particular', 
-                #'quantity', 
-                # 'is_sold_after_6_pm', 
+                'date',
+                'customer',
+                # 'is_sold_after_6_pm',
                 'status'
             )
         }),
@@ -146,21 +133,21 @@ class IncomeAdmin(admin.ModelAdmin):
         ('Extra', {
             'classes': ('collapse',),
             'fields': (
-                'discount_percent', 
-                'discount_amount', 
+                'discount_percent',
+                'discount_amount',
                 'service_tax'
-                ),
+            ),
         }),
     )
 
     list_display = [
         'customer',
         'date',
-        #'particular',
-        #'quantity',
+        'particulars',
         'sub_total',
         'discount_percent',
         'discount_amount',
+        'service_tax',
         'net_total',
         'status',
     ]
@@ -172,8 +159,50 @@ class IncomeAdmin(admin.ModelAdmin):
     ]
 
     date_hierarchy = 'date'
+    empty_value_display = 'N/A'
 
+    def sub_total(self, obj):
+        total = 0.0
+        for sale in obj.sales.all():
+            price = sale.particular.selling_unit_price * sale.quantity
+            total += price
+        return total
 
+    def net_total(self, obj):
+        service_tax = obj.service_tax
+        service_tax_added_price = self.sub_total(
+            obj) * (100 + service_tax) / 100
+        discount_percent = obj.discount_percent
+        after_discount_price = service_tax_added_price * \
+            (100 - discount_percent) / 100
+        after_discount_price = after_discount_price - obj.discount_amount
+        return after_discount_price
+
+    def particulars(self, obj):
+        items = []
+
+        for sale in obj.sales.all():
+            items.append(
+                (
+                    f'{sale.particular}',  sale.quantity
+                )
+            )
+            dropdown_html = []
+            for item in items:
+                d_item = f'<a class="dropdown-item" href="#">{item[0]} | {item[1]}</a>'
+                dropdown_html.append(d_item)
+
+            html = """
+                <div class="dropdown">
+                <button class="btn btn-light dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    Click to view
+                </button>
+                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                    {}
+                </div>
+                </div>
+        """.format(''.join(dropdown_html))
+        return mark_safe(html)
 
 
 @admin.register(Expense)
@@ -223,7 +252,7 @@ class TransactionAdmin(admin.ModelAdmin):
         'date',
         'party',
         'amount',
-        'is_expenditure',
+        'is_outgoing',
         'remarks',
     ]
 
@@ -231,13 +260,13 @@ class TransactionAdmin(admin.ModelAdmin):
         'date',
         'party',
         'amount',
-        'is_expenditure',
+        'is_outgoing',
     ]
 
     list_filter = [
         'date',
         'party',
-        'is_expenditure',
+        'is_outgoing',
     ]
 
     date_hierarchy = 'date'
@@ -257,6 +286,7 @@ class DailyBalanceAdmin(admin.ModelAdmin):
         'opening_balance',
         'income',
         'expense',
+        'penalty',
         'incoming_balance',
         'outgoing_balance',
         'closing_balance',
@@ -269,8 +299,23 @@ class DailyBalanceAdmin(admin.ModelAdmin):
     date_hierarchy = 'date'
 
     def income(self, obj):
-        return Income.objects.filter(date=obj.date).aggregate(
-            total=Sum('net_total')).get('total', 0.0)
+        total = 0
+        incomes = Income.objects.filter(date=obj.date)
+        for income in incomes:
+            sale_items = income.sales.all()
+            for sale in sale_items:
+                total += (sale.particular.selling_unit_price * sale.quantity)
+
+        return total
+
+    def penalty(self, obj):
+        total = 0
+        penalties = Penalty.objects.filter(date=obj.date)
+        for penalty in penalties:
+            total += penalty.charge
+
+        return total
+
 
     def expense(self, obj):
         return Expense.objects.filter(date=obj.date).aggregate(
@@ -278,12 +323,17 @@ class DailyBalanceAdmin(admin.ModelAdmin):
 
     def incoming_balance(self, obj):
         return Transaction.objects.filter(
-            date=obj.date, is_expenditure=False).aggregate(total=Sum('amount')).get('total', 0.0)
+            date=obj.date, is_outgoing=False).aggregate(total=Sum('amount')).get('total', 0.0)
 
     def outgoing_balance(self, obj):
         return Transaction.objects.filter(
-            date=obj.date, is_expenditure=True).aggregate(total=Sum('amount')).get('total', 0.0)
+            date=obj.date, is_outgoing=True).aggregate(total=Sum('amount')).get('total', 0.0)
 
+    def closing_balance(self, obj):
+        return (obj.opening_balance + self.income(obj) - self.expense(obj) \
+            + self.incoming_balance(obj) - self.outgoing_balance(obj) \
+            + self.penalty(obj)
+)
 
 @admin.register(Stock)
 class StockAdmin(admin.ModelAdmin):
@@ -306,34 +356,6 @@ class StockAdmin(admin.ModelAdmin):
 
     def has_delete_permission(self, request, obj=None):
         return False
-
-
-@admin.register(Credit)
-class CreditAdmin(admin.ModelAdmin):
-
-    list_display = [
-        'transaction',
-        'date',
-        'net_total',
-        'mark_as_cleared',
-    ]
-
-    list_filter = [
-        'transaction__customer',
-        'mark_as_cleared',
-        'date'
-    ]
-
-    date_hierarchy = 'date'
-
-    def has_add_permission(self, request):
-        return False
-
-    def date(self, obj):
-        return obj.transaction.date
-
-    def net_total(self, obj):
-        return obj.transaction.net_total
 
 
 @admin.register(Penalty)

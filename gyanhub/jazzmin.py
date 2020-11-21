@@ -13,13 +13,13 @@ JAZZMIN_SETTINGS = {
     "welcome_sign": "Welcome to the GyanHub Admin",
 
     # Copyright on the footer
-    "copyright": "Urja Lab Pvt. Ltd.",
+    "copyright": "Urja Lab Pvt. Ltd",
 
     # Field name on user model that contains avatar image
     "user_avatar": None,
 
     # The model admin to search from the search bar, search bar omitted if excluded
-    "search_model": "auth.User",
+    "search_model": "cafeteria.customer",
 
     # Whether to display the side menu
     "show_sidebar": True,
@@ -42,7 +42,6 @@ JAZZMIN_SETTINGS = {
         "auth.user": "fas fa-user",
         "auth.Group": "fas fa-users",
         "admin.LogEntry": "fas fa-file-alt",
-        "cafeteria.credit": "far fa-credit-card",
         "cafeteria.dailybalance": "fas fa-file-invoice-dollar",
         "cafeteria.expense": "fas fa-coins",
         "cafeteria.income": "fas fa-dollar-sign",

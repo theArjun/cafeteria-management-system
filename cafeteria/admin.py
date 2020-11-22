@@ -308,22 +308,40 @@ class DailyBalanceAdmin(admin.ModelAdmin):
 
 
     def expense(self, obj):
-        return Expense.objects.filter(date=obj.date).aggregate(
-            total=Sum('total_price')).get('total', 0.0)
+        total = Expense.objects.filter(date=obj.date).aggregate(
+            total=Sum('total_price')).get('total')
+        if total is None:
+            total = 0
+        return total
 
     def incoming_balance(self, obj):
-        return Transaction.objects.filter(
-            date=obj.date, is_outgoing=False).aggregate(total=Sum('amount')).get('total', 0.0)
+        total =  Transaction.objects.filter(
+            date=obj.date, is_outgoing=False).aggregate(total=Sum('amount')).get('total')
+        if total is None:
+            total = 0
+        return total
 
     def outgoing_balance(self, obj):
-        return Transaction.objects.filter(
-            date=obj.date, is_outgoing=True).aggregate(total=Sum('amount')).get('total', 0.0)
+        total = Transaction.objects.filter(
+            date=obj.date, is_outgoing=True).aggregate(total=Sum('amount')).get('total')
+        if total is None:
+            total = 0
+        return total
 
     def closing_balance(self, obj):
-        return (obj.opening_balance + self.income(obj) - self.expense(obj) \
-            + self.incoming_balance(obj) - self.outgoing_balance(obj) \
-            + self.penalty(obj)
-)
+
+        opening_balance = obj.opening_balance
+        income = self.income(obj)
+        expense = self.expense(obj)
+        incoming_transaction = self.incoming_balance(obj)
+        outgoing_transaction = self.outgoing_balance(obj)
+        penalty = self.penalty(obj)
+
+        print(opening_balance , income , incoming_transaction , penalty , expense , outgoing_transaction)
+
+        total = opening_balance + income + incoming_transaction + penalty - expense - outgoing_transaction
+        return total
+
 
 @admin.register(Stock)
 class StockAdmin(admin.ModelAdmin):

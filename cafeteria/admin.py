@@ -92,16 +92,6 @@ class ParticularAdmin(admin.ModelAdmin):
     inlines = [ExpenseInline, ]
 
 
-@admin.register(SaleItem)
-class SaleItemAdmin(admin.ModelAdmin):
-    '''Admin View for SaleItem'''
-
-    list_display = (
-        'particular',
-        'quantity'
-    )
-
-
 
 class SaleItemInline(admin.TabularInline):
     '''Tabular Inline View for SaleItem'''

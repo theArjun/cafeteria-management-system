@@ -66,7 +66,7 @@ JAZZMIN_SETTINGS = {
     "changeform_format": "collapsible",
 
     # Show UI Builder
-    "show_ui_builder": True,
+    "show_ui_builder": False,
 
     "navbar_small_text": False,
     "footer_small_text": True,

@@ -1,19 +1,19 @@
 JAZZMIN_SETTINGS = {
 
     # title of the window
-    "site_title": "GyanHub Management System",
+    "site_title": "Cafeteria Management System",
 
     # Title on the brand, and the login screen (19 chars max)
-    "site_header": "Gyan Hub",
+    "site_header": "Cafeteria MS",
 
     # square logo to use for your site, must be present in static files, used for favicon and brand on top left
     "site_logo": "/logo/logo.jpeg",
 
     # Welcome text on the login screen
-    "welcome_sign": "Welcome to the GyanHub Admin",
+    "welcome_sign": "Welcome to the Cafeteria Admin",
 
     # Copyright on the footer
-    "copyright": "Urja Lab Pvt. Ltd",
+    "copyright": "Arjun Adhikari",
 
     # Field name on user model that contains avatar image
     "user_avatar": None,
@@ -45,7 +45,6 @@ JAZZMIN_SETTINGS = {
         "cafeteria.dailybalance": "fas fa-file-invoice-dollar",
         "cafeteria.expense": "fas fa-coins",
         "cafeteria.income": "fas fa-dollar-sign",
-        # "cafeteria.incentive": "fas fa-funnel-dollar",
         "cafeteria.particular": "fas fa-pizza-slice",
         "cafeteria.penalty": "fas fa-user-minus",
         "cafeteria.stock": "fas fa-layer-group",
@@ -64,24 +63,5 @@ JAZZMIN_SETTINGS = {
     # - collapsible
     # - carousel
     "changeform_format": "collapsible",
-
-    # Show UI Builder
-    "show_ui_builder": False,
-
-    "navbar_small_text": False,
-    "footer_small_text": True,
-    "body_small_text": False,
-    "brand_small_text": True,
-    "brand_colour": False,
-    "accent": "accent-indigo",
-    "navbar": "navbar-white navbar-light",
-    "no_navbar_border": True,
-    "sidebar": "sidebar-dark-primary",
-    "sidebar_nav_small_text": True,
-    "sidebar_disable_expand": False,
-    "sidebar_nav_child_indent": False,
-    "sidebar_nav_compact_style": False,
-    "sidebar_nav_legacy_style": False,
-    "sidebar_nav_flat_style": True
 
 }

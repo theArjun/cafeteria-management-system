@@ -7,7 +7,7 @@ JAZZMIN_SETTINGS = {
     "site_header": "Cafeteria MS",
 
     # square logo to use for your site, must be present in static files, used for favicon and brand on top left
-    "site_logo": "/logo/logo.jpeg",
+    "site_logo": "/logo/cafems.png",
 
     # Welcome text on the login screen
     "welcome_sign": "Welcome to the Cafeteria Admin",

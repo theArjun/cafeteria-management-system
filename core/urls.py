@@ -22,9 +22,9 @@ from django.urls import (
 )
 
 
-admin.site.site_header = "Gyan Hub"
-admin.site.site_title = "Gyan Hub Admin Portal"
-admin.site.index_title = "Welcome to Gyan Hub Management System"
+admin.site.site_header = "Cafeteria"
+admin.site.site_title = "Cafeteria Admin Portal"
+admin.site.index_title = "Welcome to Cafeteria Management System"
 
 
 def trigger_error(request):

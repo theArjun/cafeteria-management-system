@@ -18,3 +18,19 @@ The features of this system are:
 10. Record the transactions performed in cafeteria.
 11. View the log entries of the cafeteria manager.
 12. Provide role and permissions to the cafeteria manager.
+
+
+## Installation Instructions
+Run the following instructions on your system.
+```
+python3 -m venv .venv
+.venv\Scripts\activate
+pip install -r requirements.txt
+python manage.py migrate
+python manage.py createsuperuser
+python manage.py runserver
+```
+Then access the server with created credentials.
+
+
+> If you feel like improving this project, send a PR or create issue.

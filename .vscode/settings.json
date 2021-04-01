@@ -4,5 +4,5 @@
     "editor.codeActionsOnSave": {
         "source.organizeImports": true
     },
-    "python.pythonPath": ".env/bin/python",
+    "python.pythonPath": ".venv/bin/python",
 }

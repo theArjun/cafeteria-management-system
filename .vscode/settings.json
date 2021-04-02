@@ -1,8 +1,40 @@
 {
-    "python.formatting.provider": "yapf",
-    "python.linting.flake8Args": ["--config=.flake8"],
+    "python.pythonPath": ".venv/bin/python",
+    "python.autoComplete.extraPaths": [
+        ".venv/bin/python",
+    ],
+    "python.linting.flake8Path": ".venv/bin/flake8",
+    "python.formatting.yapfPath": ".venv/bin/yapf",
     "editor.codeActionsOnSave": {
         "source.organizeImports": true
     },
-    "python.pythonPath": ".venv/bin/python",
+    "python.linting.flake8Args": [
+        "--config=.flake8",
+        "--ignore=E133",
+    ],
+    "python.linting.flake8Enabled": true,
+    "python.linting.mypyEnabled": false,
+    "python.linting.flake8CategorySeverity.F": "Error",
+    "python.linting.flake8CategorySeverity.E": "Error",
+    "python.formatting.provider": "yapf",
+    "editor.rulers": [80, 120],
+    "files.associations": {
+        "**/*.html": "html",
+        "**/templates/**/*.html": "django-html",
+        "**/templates/**/*": "django-txt",
+        "**/requirements{/**,*}.{txt,in}": "pip-requirements"
+    },
+    "emmet.includeLanguages": {"django-html": "html"},
+    "python.envFile": "${workspaceRoot}/.venv",
+    "beautify.language": {
+        "html": [
+            "htm",
+            "html",
+            "django-html"
+        ]
+    },
+    "python.analysis.extraPaths": [
+        ".venv/bin/python"
+    ],
+    "python.linting.enabled": true,
 }

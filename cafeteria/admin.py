@@ -177,20 +177,20 @@ class IncomeAdmin(admin.ModelAdmin):
                     f'{sale.particular}',  sale.quantity
                 )
             )
-            dropdown_html = []
-            for item in items:
-                d_item = f'<a class="dropdown-item" href="#">{item[0]} | {item[1]}</a>'
-                dropdown_html.append(d_item)
+        dropdown_html = []
+        for item in items:
+            d_item = f'<a class="dropdown-item" href="#">{item[0]} | {item[1]}</a>'
+            dropdown_html.append(d_item)
 
-            html = """
-                <div class="dropdown">
-                <button class="btn btn-light dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    Click to view
-                </button>
-                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                    {}
-                </div>
-                </div>
+        html = """
+            <div class="dropdown">
+            <button class="btn btn-light dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Click to view
+            </button>
+            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                {}
+            </div>
+            </div>
         """.format(''.join(dropdown_html))
         return mark_safe(html)
 

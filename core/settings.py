@@ -16,7 +16,10 @@ import sentry_sdk
 from decouple import config
 from sentry_sdk.integrations.django import DjangoIntegration
 
-from .jazzmin import *
+from .jazzmin import (
+    JAZZMIN_SETTINGS,
+    JAZZMIN_UI_TWEAKS,
+)
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.

@@ -35,10 +35,9 @@ class CafeteriaManager(TimeStampedModelMixin):
 class Customer(TimeStampedModelMixin, RemarksModelMixin):
     name = models.CharField(_('Customer Name'), max_length=255)
     reserve_balance = models.FloatField(_('Reserve Balance'), default=0)
-    phone_number = models.CharField(_('Phone Number'),
-                                    max_length=15,
-                                    null=True,
-                                    blank=True)
+    phone_number = models.CharField(
+        _('Phone Number'), max_length=15, default='', blank=True
+    )
     credit_balance = models.FloatField(_('Credit Balance'), default=0.0)
 
     def save(self, *args, **kwargs):

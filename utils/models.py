@@ -12,7 +12,7 @@ class TimeStampedModelMixin(models.Model):
 
 class RemarksModelMixin(models.Model):
 
-    remarks = models.TextField(null=True, blank=True)
+    remarks = models.TextField(default="", blank=True)
 
     class Meta:
         abstract = True

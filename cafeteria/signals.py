@@ -43,7 +43,11 @@ def update_daily_balance_after_delete(sender, instance, **kwargs):
 
     try:
         daily_balance = DailyBalance.objects.get(date=instance.date)
-        if Income.objects.filter(date=instance.date).count() == 0 and Expense.objects.filter(date=instance.date).count() == 0 and Transaction.objects.filter(date=instance.date).count() == 0:
+        if (
+            not Income.objects.filter(date=instance.date).exists()
+            and not Expense.objects.filter(date=instance.date).exists()
+            and not Transaction.objects.filter(date=instance.date).exists()
+        ):
             daily_balance.delete()
         else:
             daily_balance.save()

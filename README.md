@@ -16,8 +16,8 @@ The features of this system are:
 8. Increase/decrease stocks of items automatically.
 9. Issue penalties if any entities are responsible to be penalized.
 10. Record the transactions performed in cafeteria.
-11. View the log entries of the cafeteria manager.
-12. Provide role and permissions to the cafeteria manager.
+11. View the log entries of the cafeteria manager. (By Django LogEntry Admin)
+12. Provide role and permissions to the cafeteria manager. (By Django)
 
 
 ## Installation Instructions
